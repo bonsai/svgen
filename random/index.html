@@ -1,4 +1,43 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>svgen /random</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#111827;color:#e5e7eb;font:14px system-ui,sans-serif}main{text-align:center}#preview{display:inline-block;padding:24px;background:#fff;border-radius:16px}img{display:block}a{color:inherit}</style></head><body><main><div id="preview"></div><p>svgen /random</p><a href="./">regenerate</a></main><script>
-const seed=(crypto.getRandomValues(new Uint32Array(1))[0]||1);const size=128;let x=seed>>>0;const rnd=()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return(x>>>0)/4294967296};const palettes=[['#ef4444','#f59e0b','#22c55e','#3b82f6','#8b5cf6'],['#111827','#22d3ee','#f472b6','#facc15'],['#0f172a','#38bdf8','#a78bfa','#fb7185']];const colors=palettes[Math.floor(rnd()*palettes.length)];const pick=a=>a[Math.floor(rnd()*a.length)];const kinds=['square','egg','rainbow','pattern'];const kind=pick(kinds);let body='';if(kind==='square'){const n=2+Math.floor(rnd()*5),c=size/n;for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(rnd()>.25)body+=`<rect x="${x*c}" y="${y*c}" width="${c+.3}" height="${c+.3}" fill="${pick(colors)}"/>`}else if(kind==='egg'){body=`<ellipse cx="64" cy="64" rx="${40+rnd()*8}" ry="${50+rnd()*7}" fill="${pick(colors)}" transform="rotate(${Math.round(rnd()*30-15)} 64 64)"/>`}else if(kind==='rainbow'){[...colors,...colors].slice(0,5).forEach((c,i)=>{const r=58-i*8;body+=`<path d="M ${64-r} 80 A ${r} ${r} 0 0 1 ${64+r} 80" fill="none" stroke="${c}" stroke-width="8"/>`})}else{for(let i=0;i<10;i++)body+=`<circle cx="${rnd()*size}" cy="${rnd()*size}" r="${4+rnd()*14}" fill="${pick(colors)}"/>`}const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><rect width="100%" height="100%" fill="#fff"/>${body}</svg>`;const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));document.querySelector('#preview').innerHTML=`<img src="${url}" width="${size}" height="${size}" alt="random svgen">`;history.replaceState(null,'',`?seed=${seed}&type=${kind}`);
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>svgen /random</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#111827;color:#e5e7eb;font:14px system-ui,sans-serif}main{text-align:center}#preview{display:inline-block;padding:24px;background:#fff;border-radius:16px}img{display:block}a{color:inherit}</style>
+</head>
+<body><main><div id="preview"></div><p>svgen /random</p><a href="./">regenerate</a></main>
+<script>
+const p=new URLSearchParams(location.search);
+const seed=Number(p.get('seed'))||(crypto.getRandomValues(new Uint32Array(1))[0]||1);
+const size=Math.max(8,Number(p.get('size'))||128);
+let x=seed>>>0;
+const rnd=()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return(x>>>0)/4294967296};
+const palettes=[['#ef4444','#f59e0b','#22c55e','#3b82f6','#8b5cf6'],['#111827','#22d3ee','#f472b6','#facc15'],['#0f172a','#38bdf8','#a78bfa','#fb7185']];
+const colors=palettes[Math.floor(rnd()*palettes.length)];
+const pick=a=>a[Math.floor(rnd()*a.length)];
+const allKinds=['square','egg','rainbow','pattern'];
+const requested=(p.get('genre')||p.get('type')||'').split(',').map(v=>v.trim()).filter(v=>allKinds.includes(v));
+const kinds=requested.length?requested:allKinds;
+const kind=pick(kinds);
+const grid=Math.max(2,Math.min(8,Number(p.get('grid'))||2+Math.floor(rnd()*7)));
+let body='';
+if(kind==='square'){
+  const c=size/grid;
+  for(let y=0;y<grid;y++)for(let xx=0;xx<grid;xx++)if(rnd()>.25)body+=`<rect x="${xx*c}" y="${y*c}" width="${c+.3}" height="${c+.3}" fill="${pick(colors)}"/>`;
+}else if(kind==='egg'){
+  body=`<ellipse cx="${size/2}" cy="${size/2}" rx="${size*(.31+rnd()*.08)}" ry="${size*(.40+rnd()*.06)}" fill="${pick(colors)}" transform="rotate(${Math.round(rnd()*30-15)} ${size/2} ${size/2})"/>`;
+}else if(kind==='rainbow'){
+  [...colors,...colors].slice(0,5).forEach((c,i)=>{const r=size*.46-i*size*.075;body+=`<path d="M ${size/2-r} ${size*.625} A ${r} ${r} 0 0 1 ${size/2+r} ${size*.625}" fill="none" stroke="${c}" stroke-width="${size*.0625}"/>`});
+}else{
+  const count=3+Math.floor(rnd()*9);
+  for(let i=0;i<count;i++)body+=`<circle cx="${rnd()*size}" cy="${rnd()*size}" r="${size*(.03+rnd()*.11)}" fill="${pick(colors)}"/>`;
+}
+const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><rect width="100%" height="100%" fill="#fff"/>${body}</svg>`;
+const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+document.querySelector('#preview').innerHTML=`<img src="${url}" width="${size}" height="${size}" alt="random svgen">`;
+const out=new URLSearchParams({seed:String(seed),type:kind,genre:requested.length?requested.join(','):'all'});
+if(kind==='square')out.set('grid',String(grid));
+if(size!==128)out.set('size',String(size));
+history.replaceState(null,'',`?${out}`);
 </script></body></html>
