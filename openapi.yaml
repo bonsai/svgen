@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: svgen URL API
+  version: 0.1.0
+  description: Static deterministic SVG generator hosted on GitHub Pages.
+servers:
+  - url: https://bonsai.github.io/svgen
+paths:
+  /:
+    get:
+      summary: Generate a design from URL parameters
+      parameters:
+        - name: type
+          in: query
+          schema: {type: string, enum: [square, egg, rainbow, pattern, random]}
+        - name: seed
+          in: query
+          schema: {type: integer, default: 42}
+        - name: size
+          in: query
+          schema: {type: integer, minimum: 8, default: 64}
+        - name: palette
+          in: query
+          schema: {type: string, default: neon}
+        - name: background
+          in: query
+          schema: {type: string, default: white}
+        - name: opacity
+          in: query
+          schema: {type: number, minimum: 0, maximum: 1, default: 1}
+        - name: rotate
+          in: query
+          schema: {type: number, default: 0}
+        - name: count
+          in: query
+          schema: {type: integer, minimum: 1, default: 6}
+        - name: grid
+          in: query
+          schema: {type: integer, minimum: 2, maximum: 8}
+        - name: rx
+          in: query
+          schema: {type: number, default: 0.35}
+        - name: ry
+          in: query
+          schema: {type: number, default: 0.43}
+        - name: stroke
+          in: query
+          schema: {type: number, minimum: 0.5}
+      responses:
+        '200':
+          description: GitHub Pages HTML renderer
+          content:
+            text/html: {}
