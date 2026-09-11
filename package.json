@@ -2,7 +2,13 @@
   "name": "@bonsai/svgen",
   "version": "0.1.0",
   "type": "module",
-  "bin": { "svgen": "./src/cli.js" },
-  "scripts": { "start": "bun src/cli.js" },
-  "engines": { "bun": ">=1.1" }
+  "bin": {
+    "svgen": "./src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
