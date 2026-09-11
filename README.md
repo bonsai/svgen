@@ -1,18 +1,18 @@
 # svgen
 
-Tiny SVG design generator. **Bun + JavaScript only.**
+Tiny SVG design generator. **Node.js + JavaScript only.**
 
 `svgen` generates small, deterministic SVG designs for favicon, icon, thumbnail, pattern and other tiny visual assets.
 
 ## CLI
 
 ```bash
-bun install
-bun src/cli.js --type random --seed 42 --size 64
-bun src/cli.js --type square --seed 42 --size 64 > square.svg
-bun src/cli.js --type egg --seed 42 --size 128 --output egg.svg
-bun src/cli.js --type rainbow --seed 42 --size 64 > rainbow.svg
-bun src/cli.js --type pattern --seed 42 --size 64 > pattern.svg
+npm install
+node src/cli.js --type random --seed 42 --size 64
+node src/cli.js --type square --seed 42 --size 64 > square.svg
+node src/cli.js --type egg --seed 42 --size 128 --output egg.svg
+node src/cli.js --type rainbow --seed 42 --size 64 > rainbow.svg
+node src/cli.js --type pattern --seed 42 --size 64 > pattern.svg
 ```
 
 ### Install scripts
@@ -29,17 +29,23 @@ PowerShell:
 ./scripts/install.ps1
 ```
 
-The scripts prefer Bun and fall back to npm/node. The generator itself remains JavaScript-only.
+The scripts install with npm and run a small generation test. No Bun is required.
 
 ### Direct execution
 
-From the repository root use:
+From the repository root:
 
 ```bash
-bun src/cli.js --type random --seed 42 --size 64
+node src/cli.js --type square --seed 42 --size 64 > square.svg
 ```
 
-Do not use `node .\\cli.js` from `src`; on WSL the path is `node ./cli.js`, but Bun is the primary runtime.
+From `src`:
+
+```bash
+node ./cli.js --type square --seed 42 --size 64 > square.svg
+```
+
+On WSL, do not use Windows path syntax such as `node .\cli.js`. The correct relative path is `node ./cli.js`.
 
 ## Generators
 
