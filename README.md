@@ -15,11 +15,31 @@ bun src/cli.js --type rainbow --seed 42 --size 64 > rainbow.svg
 bun src/cli.js --type pattern --seed 42 --size 64 > pattern.svg
 ```
 
-After installing as a package:
+### Install scripts
+
+WSL / Linux:
 
 ```bash
-svgen --type random --seed 42 --size 64
+./scripts/install.sh
 ```
+
+PowerShell:
+
+```powershell
+./scripts/install.ps1
+```
+
+The scripts prefer Bun and fall back to npm/node. The generator itself remains JavaScript-only.
+
+### Direct execution
+
+From the repository root use:
+
+```bash
+bun src/cli.js --type random --seed 42 --size 64
+```
+
+Do not use `node .\\cli.js` from `src`; on WSL the path is `node ./cli.js`, but Bun is the primary runtime.
 
 ## Generators
 
